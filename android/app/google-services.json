@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1003301528697",
+    "project_id": "think-1cecb",
+    "storage_bucket": "think-1cecb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1003301528697:android:f6013d810e7b951b4ee0a8",
+        "android_client_info": {
+          "package_name": "com.example.bloc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-AVJbgze8uKmznbmrijq39F_sPHJIZOw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
