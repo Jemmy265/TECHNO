@@ -58,6 +58,7 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
   }
 
   Future<void> _onLike(LikePost event, Emitter<FeedState> emit) async {
+    emit(state.copyWith(status: FeedStatus.loading));
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -69,6 +70,12 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
           userName: userDoc['name'],
           userPhoto: userDoc['imagePath'],
         );
+        emit(state.copyWith(status: FeedStatus.success));
+      } else {
+        emit(state.copyWith(
+          status: FeedStatus.failure,
+          errorMessage: "User is not logged in",
+        ));
       }
     } catch (e) {
       emit(state.copyWith(
