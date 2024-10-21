@@ -1,4 +1,5 @@
 TECHNO
+
 TECHNO is a social media app built using Flutter during an internship at THINK. This project integrates various features, including authentication, an API feed, and user profiles with photo and name management. The app demonstrates best practices in Flutter development and uses Firebase for backend services.
 
 Features
