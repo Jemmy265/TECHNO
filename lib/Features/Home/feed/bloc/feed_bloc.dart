@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:think/Core/Models/post_model.dart';
-import 'package:think/Core/data/Firebase/firebase_manager.dart'; // Import your FirebaseManager
+import 'package:think/Core/data/Firebase/firebase_manager.dart';
 
 part 'feed_event.dart';
 part 'feed_state.dart';
@@ -12,9 +12,23 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
   final FirebaseManager _firebaseManager = FirebaseManager();
 
   FeedBloc() : super(const FeedState()) {
+    on<SubscribeToPosts>(_onSubscribeToPosts);
     on<LoadPosts>(_onLoadPosts);
     on<AddPost>(_onAddPost);
     on<LikePost>(_onLike);
+    on<PostsUpdated>(_onPostsUpdated);
+  }
+  Future<void> _onSubscribeToPosts(
+      SubscribeToPosts event, Emitter<FeedState> emit) async {
+    try {
+      emit(state.copyWith(status: FeedStatus.loading));
+      _firebaseManager.postsStream().listen((posts) {
+        add(PostsUpdated(posts));
+      });
+    } catch (e) {
+      emit(state.copyWith(
+          status: FeedStatus.failure, errorMessage: e.toString()));
+    }
   }
 
   Future<void> _onLoadPosts(LoadPosts event, Emitter<FeedState> emit) async {
@@ -83,5 +97,12 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
         errorMessage: e.toString(),
       ));
     }
+  }
+
+  void _onPostsUpdated(PostsUpdated event, Emitter<FeedState> emit) {
+    emit(state.copyWith(
+      status: FeedStatus.success,
+      posts: event.posts,
+    ));
   }
 }

@@ -18,9 +18,17 @@ class AddPost extends FeedEvent {
 
 class LikePost extends FeedEvent {
   final String postId;
-  
+
   LikePost({required this.postId});
 
   @override
   List<Object?> get props => [postId];
+}
+
+class SubscribeToPosts extends FeedEvent {}
+
+class PostsUpdated extends FeedEvent {
+  final List<Post> posts;
+
+  PostsUpdated(this.posts);
 }

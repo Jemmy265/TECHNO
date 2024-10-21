@@ -154,19 +154,15 @@ class FirebaseManager {
     required String userPhoto,
   }) async {
     try {
-      // Get the post document
       DocumentSnapshot postSnapshot =
           await _firestore.collection('posts').doc(postId).get();
 
       if (postSnapshot.exists) {
-        // Get the current likes array from the post
         List<dynamic> likes = postSnapshot['likes'] ?? [];
 
-        // Check if the user has already liked the post
         bool userHasLiked = likes.any((like) => like['userId'] == userId);
 
         if (!userHasLiked) {
-          // If the user has not liked the post, add the like
           await _firestore.collection('posts').doc(postId).set(
             {
               'likes': FieldValue.arrayUnion([
@@ -200,5 +196,13 @@ class FirebaseManager {
     } catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  Stream<List<Post>> postsStream() {
+    return _firestore.collection('posts').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return Post.fromFirestore(doc);
+      }).toList();
+    });
   }
 }

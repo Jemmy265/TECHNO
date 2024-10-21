@@ -83,26 +83,31 @@ class PostWidget extends StatelessWidget {
                   Text("${post.likesCount} likes"),
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      context.read<FeedBloc>().add(LikePost(postId: post.id));
-                    },
-                    child: const Text("Like"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      inFeed
-                          ? Navigator.pushNamed(context, PostScreen.routeName,
-                              arguments: post)
-                          : null;
-                    },
-                    child: const Text("Comment"),
-                  ),
-                ],
-              )
+              inFeed
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            context
+                                .read<FeedBloc>()
+                                .add(LikePost(postId: post.id));
+                          },
+                          child: const Text("Like"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            inFeed
+                                ? Navigator.pushNamed(
+                                    context, PostScreen.routeName,
+                                    arguments: post)
+                                : null;
+                          },
+                          child: const Text("Comment"),
+                        ),
+                      ],
+                    )
+                  : Container(),
             ],
           ),
         ),
