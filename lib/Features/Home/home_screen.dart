@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:think/Features/Home/bloc/tab_bloc.dart';
+import 'package:think/Features/Home/books/book_screen.dart';
 import 'package:think/Features/Home/feed/feed_tab.dart';
 import 'package:think/Features/Home/characters/characters_tab.dart';
 import 'package:think/Features/Profile/profile_screen.dart';
@@ -55,6 +56,16 @@ class HomeScreen extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.pushNamed(context, ProfileScreen.routeName);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.library_books_outlined),
+                  title: const Text(
+                    "Books",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(context, BookScreen.routeName);
                   },
                 ),
                 // const ListTile(

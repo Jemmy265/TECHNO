@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:think/Core/Models/book_model.dart';
 import 'package:think/Features/Auth/view/register_screen.dart';
+import 'package:think/Features/Rent/book_details_screen.dart';
+import 'package:think/Features/Home/books/book_screen.dart';
 import 'package:think/Features/Home/home_screen.dart';
 import 'package:think/Features/Auth/view/login_screen.dart';
 import 'package:think/Features/Profile/profile_screen.dart';
@@ -53,7 +56,20 @@ class MyApp extends StatelessWidget {
         HomeScreen.routeName: (context) => HomeScreen(),
         ProfileScreen.routeName: (context) => ProfileScreen(),
         RegisterScreen.routeName: (context) => RegisterScreen(),
-        PostScreen.routeName:(context) => PostScreen()
+        PostScreen.routeName: (context) => PostScreen(),
+        BookScreen.routeName: (context) => BookScreen(),
+      },
+      onGenerateRoute: (RouteSettings settings) {
+        switch (settings.name) {
+          case BookDetailsScreen.routeName:
+            final Book book = settings.arguments as Book;
+            return MaterialPageRoute(
+              builder: (context) => BookDetailsScreen(book: book),
+            );
+
+          default:
+            return null;
+        }
       },
     );
   }

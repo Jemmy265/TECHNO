@@ -4,8 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
+import 'package:think/Core/Models/book_model.dart';
 import 'package:think/Core/Models/comment_model.dart';
 import 'package:think/Core/Models/post_model.dart';
+import 'package:think/Core/Models/request_model.dart';
 
 class FirebaseManager {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -204,5 +207,102 @@ class FirebaseManager {
         return Post.fromFirestore(doc);
       }).toList();
     });
+  }
+
+  Future<List<Book>> getBooks() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot =
+          await _firestore.collection('books').get();
+
+      List<Book> books =
+          snapshot.docs.map((doc) => Book.fromFirestore(doc)).toList();
+
+      return books;
+    } catch (e) {
+      debugPrint('Failed to fetch books: $e');
+      return [];
+    }
+  }
+
+  Future<void> rentBook(RentalRequest request) async {
+    try {
+      await _firestore.collection('Rent Requests').add(request.toFirestore());
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<String> createRentalRequest(String bookTitle, DateTime startDate, DateTime endDate) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      // Check if user already has a request for this book
+      final existingRequest = await checkExistingRequest(bookTitle);
+      if (existingRequest != null) {
+        throw Exception('You already have a request for this book');
+      }
+
+      // Fetch user data from Firestore using the user ID
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (!userDoc.exists) {
+        throw Exception('User data not found in Firestore');
+      }
+
+      final userData = userDoc.data();
+      final userName =
+          userData?['name'] ?? userData?['displayName'] ?? 'Unknown User';
+
+      final request = RentalRequest(
+        id: '', // Will be set by Firestore
+        userid: user.uid, // Add user ID to the request
+        userName: userName,
+        bookTitle: bookTitle,
+        isAccepted: false,
+        createdAt: DateTime.now(),
+        startDate: startDate,
+        endDate: endDate, // Default to 7 days
+      );
+
+      final docRef =
+          await _firestore.collection('requests').add(request.toFirestore());
+
+      return docRef.id;
+    } catch (e) {
+      throw Exception('Failed to create rental request: $e');
+    }
+  }
+
+  Future<RentalRequest?> checkExistingRequest(String bookTitle) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      // Fetch user data from Firestore to get the userName
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (!userDoc.exists) {
+        throw Exception('User data not found in Firestore');
+      }
+
+      final userData = userDoc.data();
+      final userName =
+          userData?['name'] ?? userData?['displayName'] ?? 'Unknown User';
+
+      final querySnapshot = await _firestore
+          .collection('requests')
+          .where('userName', isEqualTo: userName)
+          .where('bookTitle', isEqualTo: bookTitle)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final doc = querySnapshot.docs.first;
+        return RentalRequest.fromfirestore(doc.id, doc.data());
+      }
+
+      return null;
+    } catch (e) {
+      throw Exception('Failed to check existing request: $e');
+    }
   }
 }

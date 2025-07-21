@@ -20,30 +20,7 @@ class CharactersTab extends StatelessWidget {
     return BlocProvider(
       create: (context) => CharactersBloc()..add(GetCharacters()),
       child: BlocListener<CharactersBloc, CharactersState>(
-        listener: (context, state) {
-          // if (state.status == CharactersStatus.error) {
-          //   return Center(
-          //     child: Card(
-          //       margin: const EdgeInsets.symmetric(
-          //         horizontal: 20,
-          //         vertical: 25,
-          //       ),
-          //       color: Theme.of(context).primaryColor,
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(15),
-          //         side: const BorderSide(width: 1, color: Color(0xff495D75)),
-          //       ),
-          //       child: const Padding(
-          //         padding: EdgeInsets.all(20.0),
-          //         child: Text(
-          //           'Failed to load Characters',
-          //           style: TextStyle(color: Colors.white),
-          //         ),
-          //       ),
-          //     ),
-          //   );
-          // }
-        },
+        listener: (context, state) {},
         child: BlocBuilder<CharactersBloc, CharactersState>(
           builder: (context, state) {
             if (state.status == CharactersStatus.loading) {
